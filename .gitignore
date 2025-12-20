@@ -1,0 +1,5 @@
+src/.vscode
+src/log
+build/
+install/
+log/

@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="gen3_lite_arm">
+
+  <!-- Incluir macros -->
+  <xacro:include filename="gen3_lite_macro.xacro"/>
+  <xacro:include filename="gen3_lite_gz_ctrl_macro.xacro"/>
+
+  <!-- Cargar brazo -->
+  <xacro:load_arm/>
+
+  <!-- Cargar ros2_control + Gazebo plugin -->
+  <xacro:load_gz_arm_ros2_control/>
+
+</robot>
