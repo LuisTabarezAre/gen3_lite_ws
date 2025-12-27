@@ -1,196 +1,197 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="https://www.ros.org/wiki/xacro">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-    <xacro:macro name="load_arm">
+  <!-- ================= MACRO PRINCIPAL ================= -->
+  <xacro:macro name="gen3_lite_arm" params="p ns controllers">
 
-      <!-- WORLD -->
-      <link name="world"/>
+  <!-- WORLD -->
+  <link name="world"/>
 
-      <!-- BASE -->
-      <link name="base_link">
-        <inertial>
-          <origin xyz="0.00244324 0.00015573 0.08616742"/>
-          <mass value="1.14608471"/>
-          <inertia ixx="0.00335854" ixy="3.9E-07" ixz="0.00010989"
-                  iyy="0.003311" iyz="1.91E-06" izz="0.00077158"/>
-        </inertial>
-        <visual>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/base_link.STL"/>
-          </geometry>
-          <material name="gen3_gray">
-            <color rgba="0.803 0.824 0.820 1"/>
-          </material>
-        </visual>
-        <collision>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/base_link.STL"/>
-          </geometry>
-        </collision>
-      </link>
+  <!-- BASE -->
+  <link name="${p}base_link">
+    <inertial>
+      <origin xyz="0.00244324 0.00015573 0.08616742"/>
+      <mass value="1.14608471"/>
+      <inertia ixx="0.00335854" ixy="3.9E-07" ixz="0.00010989"
+              iyy="0.003311" iyz="1.91E-06" izz="0.00077158"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/base_link.STL"/>
+      </geometry>
+      <material name="gen3_gray">
+        <color rgba="0.803 0.824 0.820 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/base_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
 
-      <joint name="world_joint" type="fixed">
-        <parent link="world"/>
-        <child link="base_link"/>
-        <origin xyz="0 0 0"/>
-      </joint>
+  <joint name="${p}world_joint" type="fixed">
+    <parent link="world"/>
+    <child link="${p}base_link"/>
+    <origin xyz="0 0 0"/>
+  </joint>
 
-      <!-- JOINT 1 -->
-      <link name="shoulder_link">
-        <inertial>
-          <origin xyz="2.477E-05 0.02213531 0.09937686"/>
-          <mass value="0.95974404"/>
-          <inertia ixx="0.00165947" ixy="2E-08" ixz="3.6E-07"
-                  iyy="0.00140355" iyz="0.00034927" izz="0.00089493"/>
-        </inertial>
-        <visual>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/shoulder_link.STL"/>
-          </geometry>
-          <material name="gen3_gray">
-            <color rgba="0.803 0.824 0.820 1"/>
-          </material>
-        </visual>
-        <collision>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/shoulder_link.STL"/>
-          </geometry>
-        </collision>
-      </link>
+  <!-- JOINT 1 -->
+  <link name="${p}shoulder_link">
+    <inertial>
+      <origin xyz="2.477E-05 0.02213531 0.09937686"/>
+      <mass value="0.95974404"/>
+      <inertia ixx="0.00165947" ixy="2E-08" ixz="3.6E-07"
+              iyy="0.00140355" iyz="0.00034927" izz="0.00089493"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/shoulder_link.STL"/>
+      </geometry>
+      <material name="gen3_gray">
+        <color rgba="0.803 0.824 0.820 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/shoulder_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
 
-      <joint name="joint_1" type="revolute">
-        <parent link="base_link"/>
-        <child link="shoulder_link"/>
-        <origin xyz="0 0 0.12825"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="-2.69" upper="2.69" effort="10" velocity="1.6"/>
-      </joint>
+  <joint name="${p}joint_1" type="revolute">
+    <parent link="${p}base_link"/>
+    <child link="${p}shoulder_link"/>
+    <origin xyz="0 0 0.12825"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.69" upper="2.69" effort="10" velocity="1.6"/>
+  </joint>
 
-      <!-- JOINT 2 -->
-      <link name="arm_link">
-        <inertial>
-          <origin xyz="0.02998299 0.21154808 0.0453031"/>
-          <mass value="1.17756164"/>
-          <inertia ixx="0.01149277" ixy="1E-06" ixz="1.6E-07"
-                  iyy="0.00102851" iyz="0.00140765" izz="0.01133492"/>
-        </inertial>
-        <visual>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/arm_link.STL"/>
-          </geometry>
-          <material name="gen3_gray">
-            <color rgba="0.803 0.824 0.820 1"/>
-          </material>
-        </visual>
-        <collision>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/arm_link.STL"/>
-          </geometry>
-        </collision>
-      </link>
+  <!-- JOINT 2 -->
+  <link name="${p}arm_link">
+    <inertial>
+      <origin xyz="0.02998299 0.21154808 0.0453031"/>
+      <mass value="1.17756164"/>
+      <inertia ixx="0.01149277" ixy="1E-06" ixz="1.6E-07"
+              iyy="0.00102851" iyz="0.00140765" izz="0.01133492"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/arm_link.STL"/>
+      </geometry>
+      <material name="gen3_gray">
+        <color rgba="0.803 0.824 0.820 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/arm_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
 
-      <joint name="joint_2" type="revolute">
-        <parent link="shoulder_link"/>
-        <child link="arm_link"/>
-        <origin xyz="0 -0.03 0.115" rpy="1.5708 0 0"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="-2.69" upper="2.69" effort="14" velocity="1.6"/>
-      </joint>
+  <joint name="${p}joint_2" type="revolute">
+    <parent link="${p}shoulder_link"/>
+    <child link="${p}arm_link"/>
+    <origin xyz="0 -0.03 0.115" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.69" upper="2.69" effort="14" velocity="1.6"/>
+  </joint>
 
-      <!-- JOINT 3 -->
-      <link name="forearm_link">
-        <inertial>
-          <origin xyz="0.0301559 0.09502206 0.0073555"/>
-          <mass value="0.59767669"/>
-          <inertia ixx="0.00163256" ixy="7.11E-06" ixz="1.54E-06"
-                  iyy="0.00029798" iyz="9.587E-05" izz="0.00169091"/>
-        </inertial>
-        <visual>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/forearm_link.STL"/>
-          </geometry>
-          <material name="gen3_gray">
-            <color rgba="0.803 0.824 0.820 1"/>
-          </material>
-        </visual>
-        <collision>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/forearm_link.STL"/>
-          </geometry>
-        </collision>
-      </link>
+  <!-- JOINT 3 -->
+  <link name="${p}forearm_link">
+    <inertial>
+      <origin xyz="0.0301559 0.09502206 0.0073555"/>
+      <mass value="0.59767669"/>
+      <inertia ixx="0.00163256" ixy="7.11E-06" ixz="1.54E-06"
+              iyy="0.00029798" iyz="9.587E-05" izz="0.00169091"/>
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/forearm_link.STL"/>
+      </geometry>
+      <material name="gen3_gray">
+        <color rgba="0.803 0.824 0.820 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/forearm_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
 
-      <joint name="joint_3" type="revolute">
-        <parent link="arm_link"/>
-        <child link="forearm_link"/>
-        <origin xyz="0 0.28 0" rpy="-3.1416 0 0"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="-2.69" upper="2.69" effort="10" velocity="1.6"/>
-      </joint>
+  <joint name="${p}joint_3" type="revolute">
+    <parent link="${p}arm_link"/>
+    <child link="${p}forearm_link"/>
+    <origin xyz="0 0.28 0" rpy="-3.1416 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.69" upper="2.69" effort="10" velocity="1.6"/>
+  </joint>
 
-      <!-- WRIST -->
-      <link name="lower_wrist_link">
-        <inertial> 
-          <origin xyz="0.00575149 0.01000443 0.08719207" rpy="0 0 0" /> 
-          <mass value="0.52693412" /> 
-          <inertia ixx="0.00069098" ixy="2.4E-07" ixz="0.00016483" iyy="0.00078519" iyz="7.4E-07" izz="0.00034115" /> 
-        </inertial>
-        <visual>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/lower_wrist_link.STL"/>
-          </geometry>
-          <material name="gen3_gray">
-            <color rgba="0.803 0.824 0.820 1"/>
-          </material>
-        </visual>
-        <collision>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/lower_wrist_link.STL"/>
-          </geometry>
-        </collision>
-      </link>
+  <!-- WRIST -->
+  <link name="${p}lower_wrist_link">
+    <inertial> 
+      <origin xyz="0.00575149 0.01000443 0.08719207" rpy="0 0 0" /> 
+      <mass value="0.52693412" /> 
+      <inertia ixx="0.00069098" ixy="2.4E-07" ixz="0.00016483" iyy="0.00078519" iyz="7.4E-07" izz="0.00034115" /> 
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/lower_wrist_link.STL"/>
+      </geometry>
+      <material name="gen3_gray">
+        <color rgba="0.803 0.824 0.820 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/lower_wrist_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
 
-      <joint name="joint_4" type="revolute">
-        <parent link="forearm_link"/>
-        <child link="lower_wrist_link"/>
-        <origin xyz="0 -0.14 0.02" rpy="1.5708 0 0"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="-2.59" upper="2.59" effort="7" velocity="1.6"/>
-      </joint>
+  <joint name="${p}joint_4" type="revolute">
+    <parent link="${p}forearm_link"/>
+    <child link="${p}lower_wrist_link"/>
+    <origin xyz="0 -0.14 0.02" rpy="1.5708 0 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.59" upper="2.59" effort="7" velocity="1.6"/>
+  </joint>
 
-      <link name="upper_wrist_link">
-        <inertial> 
-          <origin xyz="0.08056517 0.00980409 0.01872799" rpy="0 0 0" /> 
-          <mass value="0.58097325" /> 
-          <inertia ixx="0.00021268" ixy="5.21E-06" ixz="2.91E-06" iyy="0.00106371" iyz="1.1E-07" izz="0.00108465" /> 
-        </inertial>
-        <visual>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/upper_wrist_link.STL"/>
-          </geometry>
-          <material name="gen3_gray">
-            <color rgba="0.803 0.824 0.820 1"/>
-          </material>
-        </visual>
-        <collision>
-          <geometry>
-            <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/upper_wrist_link.STL"/>
-          </geometry>
-        </collision>
-      </link>
+  <link name="${p}upper_wrist_link">
+    <inertial> 
+      <origin xyz="0.08056517 0.00980409 0.01872799" rpy="0 0 0" /> 
+      <mass value="0.58097325" /> 
+      <inertia ixx="0.00021268" ixy="5.21E-06" ixz="2.91E-06" iyy="0.00106371" iyz="1.1E-07" izz="0.00108465" /> 
+    </inertial>
+    <visual>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/upper_wrist_link.STL"/>
+      </geometry>
+      <material name="gen3_gray">
+        <color rgba="0.803 0.824 0.820 1"/>
+      </material>
+    </visual>
+    <collision>
+      <geometry>
+        <mesh filename="file:///home/robot/ws_gen3lite/src/gen3_lite_description/meshes/arm/upper_wrist_link.STL"/>
+      </geometry>
+    </collision>
+  </link>
 
-      <joint name="joint_5" type="revolute">
-        <parent link="lower_wrist_link"/>
-        <child link="upper_wrist_link"/>
-        <origin xyz="0.0285 0 0.105" rpy="0 1.5708 0"/>
-        <axis xyz="0 0 1"/>
-        <limit lower="-2.57" upper="2.57" effort="7" velocity="1.6"/>
-      </joint>
+  <joint name="${p}joint_5" type="revolute">
+    <parent link="${p}lower_wrist_link"/>
+    <child link="${p}upper_wrist_link"/>
+    <origin xyz="0.0285 0 0.105" rpy="0 1.5708 0"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-2.57" upper="2.57" effort="7" velocity="1.6"/>
+  </joint>
 
       <!-- JOINT 6 CONECTADO DIRECTO AL GRIPPER -->
-  <joint name="joint_6" type="revolute">
-    <parent link="upper_wrist_link"/>
-    <child link="gripper_base_link"/>
+  <joint name="${p}joint_6" type="revolute">
+    <parent link="${p}upper_wrist_link"/>
+    <child link="${p}gripper_base_link"/>
     <origin xyz="-0.105 0 0.0285" rpy="0 -1.5708 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-2.59" upper="2.59" effort="7" velocity="3.2"/>
@@ -198,7 +199,7 @@
 
   <!-- ================= GRIPPER ================= -->
 
-  <link name="gripper_base_link">
+  <link name="${p}gripper_base_link">
     <inertial>
       <origin xyz="4.03E-06 1.08E-05 0.041397" rpy="0 0 0"/>
       <mass value="0.1395"/>
@@ -221,7 +222,7 @@
   </link>
 
   <!-- RIGHT FINGER PROX -->
-  <link name="right_finger_prox_link">
+  <link name="${p}right_finger_prox_link">
     <inertial>
       <origin xyz="0.020257 0.0063483 6.991E-05"/>
       <mass value="0.018385"/>
@@ -243,16 +244,16 @@
     </collision>
   </link>
 
-  <joint name="right_finger_bottom_joint" type="revolute">
+  <joint name="${p}right_finger_bottom_joint" type="revolute">
     <origin xyz="0 -0.030501 0.070003" rpy="0 1.5708 0"/>
-    <parent link="gripper_base_link"/>
-    <child link="right_finger_prox_link"/>
+    <parent link="${p}gripper_base_link"/>
+    <child link="${p}right_finger_prox_link"/>
     <axis xyz="0 0 1"/>
     <limit lower="-0.09" upper="0.96" effort="1000" velocity="0.6"/>
   </joint>
 
   <!-- RIGHT FINGER DIST -->
-  <link name="right_finger_dist_link">
+  <link name="${p}right_finger_dist_link">
     <inertial>
       <origin xyz="0.018488 0.0011091 0"/>
       <mass value="0.010748"/>
@@ -274,17 +275,17 @@
     </collision>
   </link>
 
-  <joint name="right_finger_tip_joint" type="revolute">
+  <joint name="${p}right_finger_tip_joint" type="revolute">
     <origin xyz="-0.045636 0.020423 0"/>
-    <parent link="right_finger_prox_link"/>
-    <child link="right_finger_dist_link"/>
+    <parent link="${p}right_finger_prox_link"/>
+    <child link="${p}right_finger_dist_link"/>
     <axis xyz="0 0 1"/>
     <limit lower="-0.50" upper="0.21" effort="1000" velocity="1000"/>
-    <mimic joint="right_finger_bottom_joint" multiplier="-0.676" offset="0.149"/>
+    <mimic joint="${p}right_finger_bottom_joint" multiplier="-0.676" offset="0.149"/>
   </joint>
 
   <!-- LEFT FINGER PROX -->
-  <link name="left_finger_prox_link">
+  <link name="${p}left_finger_prox_link">
     <inertial>
       <origin xyz="0.020257 0.0063483 6.99E-05"/>
       <mass value="0.018385"/>
@@ -306,17 +307,17 @@
     </collision>
   </link>
 
-  <joint name="left_finger_bottom_joint" type="revolute">
+  <joint name="${p}left_finger_bottom_joint" type="revolute">
     <origin xyz="0 0.0305 0.070003" rpy="0 1.5708 0"/>
-    <parent link="gripper_base_link"/>
-    <child link="left_finger_prox_link"/>
+    <parent link="${p}gripper_base_link"/>
+    <child link="${p}left_finger_prox_link"/>
     <axis xyz="0 0 1"/>
     <limit lower="-0.96" upper="0.09" effort="1000" velocity="1000"/>
-    <mimic joint="right_finger_bottom_joint" multiplier="-1.0" offset="0.0"/>
+    <mimic joint="${p}right_finger_bottom_joint" multiplier="-1.0" offset="0.0"/>
   </joint>
 
   <!-- LEFT FINGER DIST -->
-  <link name="left_finger_dist_link">
+  <link name="${p}left_finger_dist_link">
     <inertial>
       <origin xyz="-0.018488 0.0011091 0"/>
       <mass value="0.010748"/>
@@ -338,15 +339,88 @@
     </collision>
   </link>
 
-  <joint name="left_finger_tip_joint" type="revolute">
+  <joint name="${p}left_finger_tip_joint" type="revolute">
     <origin xyz="-0.045636 -0.020423 6.9901E-05"/>
-    <parent link="left_finger_prox_link"/>
-    <child link="left_finger_dist_link"/>
+    <parent link="${p}left_finger_prox_link"/>
+    <child link="${p}left_finger_dist_link"/>
     <axis xyz="0 0 -1"/>
     <limit lower="-0.50" upper="0.21" effort="1000" velocity="1000"/>
-    <mimic joint="right_finger_bottom_joint" multiplier="-0.676" offset="0.149"/>
+    <mimic joint="${p}right_finger_bottom_joint" multiplier="-0.676" offset="0.149"/>
   </joint>
+  
+  <!-- Gazebo ros2_control plugin -->
+  <gazebo>
+    <plugin filename="gz_ros2_control-system"
+            name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <ros>
+        <namespace>${ns}</namespace>
+      </ros>
+      <parameters>${controllers}</parameters>
+      <!--<parameters>
+          $(find gen3_lite_description)/config/gen3_lite_controllers.yaml
+      </parameters>-->
+    </plugin>
+  </gazebo>
 
+  <ros2_control name="${p}Gen3LiteSystem" type="system">
+    <hardware>
+      <plugin>gz_ros2_control/GazeboSimSystem</plugin>
+    </hardware>
 
-    </xacro:macro>
-  </robot>
+    <joint name="${p}joint_1">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="${p}joint_2">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="${p}joint_3">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="${p}joint_4">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="${p}joint_5">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+
+    <joint name="${p}joint_6">
+      <command_interface name="position"/>
+      <command_interface name="velocity"/>
+      <command_interface name="effort"/>
+      <state_interface name="position"/>
+      <state_interface name="velocity"/>
+      <state_interface name="effort"/>
+    </joint>
+  </ros2_control>
+  </xacro:macro>
+
+</robot>

@@ -1,17 +1,107 @@
 <launch>
-    <let name = "urdf_path"
-         value = "$(find-pkg-share gen3_lite_description)/urdf/gen3_lite.urdf.xacro" />
 
-    <let name = "rviz_config_path"
-         value = "$(find-pkg-share gen3_lite_description)/rviz/rviz_config.rviz" />
-         
-    <node pkg = "robot_state_publisher" exec = "robot_state_publisher">
-          <param name="robot_description"
-                 value="$(command 'xacro $(var urdf_path)')" />
+    <!-- ===============================
+        Variables
+        =============================== -->
+    <let name="robot_ns" value="r1"/>
+    <let name="robot_prefix" value="r1_"/>
+
+    <let name="urdf_path"
+        value="$(find-pkg-share gen3_lite_description)/urdf/gen3_lite.urdf.xacro"/>
+
+    <let name="controllers_yaml"
+        value="$(find-pkg-share gen3_lite_description)/config/gen3_lite_controllers.yaml"/>
+
+    <let name="gazebo_bridge_yaml"
+        value="$(find-pkg-share gen3_lite_description)/config/gazebo_bridge.yaml"/>
+
+    <let name="rviz_config"
+        value="$(find-pkg-share gen3_lite_description)/rviz/rviz_config.rviz"/>
+
+    <!-- ===============================
+        Gazebo
+        =============================== -->
+    <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+        <arg name="gz_args" 
+             value="$(find-pkg-share gen3_lite_description)/worlds/table.sdf -r"/>
+    </include>
+
+    <!-- ===============================
+        robot_state_publisher
+        =============================== -->
+    <node pkg="robot_state_publisher"
+            exec="robot_state_publisher"
+            namespace="$(var robot_ns)"
+            output="screen">
+
+        <param name="use_sim_time" value="true"/>
+
+        <param name="robot_description"
+        value="$(command 'xacro $(var urdf_path) prefix:=$(var robot_prefix) namespace:=$(var robot_ns) simulation_controllers:=$(var controllers_yaml)')"/>
+
     </node>
 
-    <node pkg = "joint_state_publisher_gui" exec = "joint_state_publisher_gui" />
+    <!-- ===============================
+        Gazebo bridge
+        =============================== -->
+    <node pkg="ros_gz_bridge"
+            exec="parameter_bridge"
+            output="screen">
+        <param name="config_file" value="$(var gazebo_bridge_yaml)"/>
+    </node>
 
-    <node pkg = "rviz2" exec = "rviz2" output = "screen" args = "-d $(var rviz_config_path)"/>
+    <!-- ===============================
+        Spawn robot
+        =============================== -->
+    <node pkg="ros_gz_sim"
+            exec="create"
+            output="screen"
+            args="-world table_world -topic /$(var robot_ns)/robot_description -z 0.75"/>
 
-</launch>
+    <!-- ===============================
+        RViz
+        =============================== -->
+    <node pkg="rviz2"
+            exec="rviz2"
+            output="screen"
+            args="-d $(var rviz_config)">
+        <param name="use_sim_time" value="true"/>
+    </node>
+
+    <!-- ===============================
+        Controllers (ALL INACTIVE)
+        =============================== -->
+
+    <!-- Joint State Broadcaster -->
+    <node pkg="controller_manager"
+            exec="spawner"
+            namespace="$(var robot_ns)"
+            output="screen"
+            args="joint_state_broadcaster
+                --controller-manager /$(var robot_ns)/controller_manager"/>
+
+    <!-- Position Controller -->
+    <node pkg="controller_manager"
+            exec="spawner"
+            namespace="$(var robot_ns)"
+            output="screen"
+            args="position_controller
+                --controller-manager /$(var robot_ns)/controller_manager"/>
+
+    <!-- Velocity Controller -->
+    <node pkg="controller_manager"
+            exec="spawner"
+            namespace="$(var robot_ns)"
+            output="screen"
+            args="velocity_controller
+                --controller-manager /$(var robot_ns)/controller_manager --inactive"/>
+
+    <!-- Effort Controller -->
+    <node pkg="controller_manager"
+            exec="spawner"
+            namespace="$(var robot_ns)"
+            output="screen"
+            args="effort_controller
+                --controller-manager /$(var robot_ns)/controller_manager --inactive"/>
+
+    </launch>

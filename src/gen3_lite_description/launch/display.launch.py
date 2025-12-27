@@ -18,14 +18,23 @@ def generate_launch_description():
     # ------------------------------------------------
     # Launch arguments
     # ------------------------------------------------
-    use_sim_time = LaunchConfiguration('use_sim_time', default='true')
+    use_sim_time = LaunchConfiguration('use_sim_time')
 
-    robot_name = 'gen3_lite'
+    robot_name = 'gen3_lite_r1'
+    robot_ns = 'r1'
+    prefix = 'r1_'
+
     description_pkg = 'gen3_lite_description'
     description_path = get_package_share_directory(description_pkg)
 
+    controllers_yaml = os.path.join(
+        description_path,
+        'config',
+        'gen3_lite_controllers.yaml'
+    )
+
     # ------------------------------------------------
-    # Gazebo resource paths (CRÍTICO)
+    # Gazebo resource paths
     # ------------------------------------------------
     gz_resource_path = os.environ.get('GZ_SIM_RESOURCE_PATH', '')
     gz_resource_path += ':' + str(Path(description_path).parent)
@@ -33,21 +42,20 @@ def generate_launch_description():
     os.environ['GZ_SIM_RESOURCE_PATH'] = gz_resource_path
 
     # ------------------------------------------------
-    # Gazebo (cargar table.sdf)
+    # Gazebo
     # ------------------------------------------------
     gazebo = IncludeLaunchDescription(
-    PythonLaunchDescriptionSource(
-        os.path.join(
-            get_package_share_directory('ros_gz_sim'),
-            'launch',
-            'gz_sim.launch.py'
-        )
-    ),
-    launch_arguments={
-        'gz_args': f"{os.path.join(description_path, 'worlds', 'table.sdf')} -r"
-    }.items(),
+        PythonLaunchDescriptionSource(
+            os.path.join(
+                get_package_share_directory('ros_gz_sim'),
+                'launch',
+                'gz_sim.launch.py'
+            )
+        ),
+        launch_arguments={
+            'gz_args': f"{os.path.join(description_path, 'worlds', 'table.sdf')} -r"
+        }.items(),
     )
-
 
     # ------------------------------------------------
     # Robot description (XACRO → URDF)
@@ -58,7 +66,14 @@ def generate_launch_description():
         'gen3_lite.urdf.xacro'
     )
 
-    robot_description = xacro.process_file(xacro_file).toxml()
+    robot_description = xacro.process_file(
+        xacro_file,
+        mappings={
+            'prefix': prefix,
+            'namespace': robot_ns,
+            'simulation_controllers': controllers_yaml,
+        }
+    ).toxml()
 
     # ------------------------------------------------
     # robot_state_publisher
@@ -66,6 +81,7 @@ def generate_launch_description():
     robot_state_publisher = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
+        namespace=robot_ns,
         output='screen',
         parameters=[
             {
@@ -76,7 +92,7 @@ def generate_launch_description():
     )
 
     # ------------------------------------------------
-    # Spawn robot (IMPORTANTE: world correcto)
+    # Spawn robot in Gazebo
     # ------------------------------------------------
     spawn_robot = Node(
         package='ros_gz_sim',
@@ -91,14 +107,15 @@ def generate_launch_description():
     )
 
     # ------------------------------------------------
-    # ros2_control spawners
+    # ros2_control spawners (NAMESPACED)
     # ------------------------------------------------
     joint_state_broadcaster = Node(
         package='controller_manager',
         executable='spawner',
+        namespace=robot_ns,
         arguments=[
             'joint_state_broadcaster',
-            '--controller-manager', '/controller_manager',
+            '--controller-manager', f'/{robot_ns}/controller_manager',
         ],
         output='screen',
     )
@@ -106,11 +123,36 @@ def generate_launch_description():
     position_controller = Node(
         package='controller_manager',
         executable='spawner',
+        namespace=robot_ns,
         arguments=[
             'position_controller',
-            '--controller-manager', '/controller_manager',
+            '--controller-manager', f'/{robot_ns}/controller_manager',
         ],
         output='screen',
+    )
+
+    velocity_controller = Node(
+    package='controller_manager',
+    executable='spawner',
+    namespace=robot_ns,
+    arguments=[
+        'velocity_controller',
+        '--inactive',
+        '--controller-manager', f'/{robot_ns}/controller_manager',
+    ],
+    output='screen',
+    )
+
+    effort_controller = Node(
+    package='controller_manager',
+    executable='spawner',
+    namespace=robot_ns,
+    arguments=[
+        'effort_controller',
+        '--inactive',
+        '--controller-manager', f'/{robot_ns}/controller_manager',
+    ],
+    output='screen',
     )
 
     # ------------------------------------------------
@@ -128,7 +170,7 @@ def generate_launch_description():
     )
 
     # ------------------------------------------------
-    # Launch sequence (ESTE ES EL PUNTO CLAVE)
+    # Launch sequence
     # ------------------------------------------------
     return LaunchDescription([
 
@@ -156,5 +198,18 @@ def generate_launch_description():
             )
         ),
 
+        RegisterEventHandler(
+            OnProcessExit(
+                target_action=position_controller,
+                on_exit=[velocity_controller],
+            )
+        ),
+
+        RegisterEventHandler(
+            OnProcessExit(
+                target_action=velocity_controller,
+                on_exit=[effort_controller],
+            )
+        ),
         rviz,
     ])

@@ -1,0 +1,113 @@
+<launch>
+
+  <!-- ========================= -->
+  <!-- === ARGUMENTOS ========= -->
+  <!-- ========================= -->
+
+  <arg name="world_path"
+       default="$(find-pkg-share gen3_lite_description)/worlds/multi_table.sdf"/>
+
+  <arg name="controllers_yaml"
+       default="$(find-pkg-share gen3_lite_description)/config/multi_gen3_lite_controllers.yaml"/>
+
+  <arg name="urdf_path"
+       default="$(find-pkg-share gen3_lite_description)/urdf/gen3_lite.urdf.xacro"/>
+
+  <!-- ================= -->
+  <!-- === GAZEBO ======= -->
+  <!-- ================= -->
+
+  <include file="$(find-pkg-share ros_gz_sim)/launch/gz_sim.launch.py">
+    <arg name="gz_args"
+         value="-r $(var world_path)"/>
+  </include>
+
+  <!-- ================================================= -->
+  <!-- ================= ROBOT r1 ====================== -->
+  <!-- ================================================= -->
+
+  <node pkg="robot_state_publisher"
+        exec="robot_state_publisher"
+        namespace="r1"
+        output="screen">
+    <param name="use_sim_time" value="true"/>
+    <param name="robot_description"
+           value="$(command 'xacro $(var urdf_path) prefix:=r1_ namespace:=r1 simulation_controllers:=$(var controllers_yaml)')"/>
+  </node>
+
+  <node pkg="ros_gz_sim"
+        exec="create"
+        output="screen"
+        args="-name r1 -topic /r1/robot_description -x 1.0 -y 1.0 -z 0.75"/>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r1"
+        output="screen"
+        args="joint_state_broadcaster --controller-manager /r1/controller_manager">
+    <param name="use_sim_time" value="true"/>
+  </node>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r1"
+        output="screen"
+        args="position_controller --inactive --controller-manager /r1/controller_manager"/>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r1"
+        output="screen"
+        args="velocity_controller --inactive --controller-manager /r1/controller_manager"/>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r1"
+        output="screen"
+        args="effort_controller --inactive --controller-manager /r1/controller_manager"/>
+
+  <!-- ================================================= -->
+  <!-- ================= ROBOT r2 ====================== -->
+  <!-- ================================================= -->
+
+  <node pkg="robot_state_publisher"
+        exec="robot_state_publisher"
+        namespace="r2"
+        output="screen">
+    <param name="use_sim_time" value="true"/>
+    <param name="robot_description"
+           value="$(command 'xacro $(var urdf_path) prefix:=r2_ namespace:=r2 simulation_controllers:=$(var controllers_yaml)')"/>
+  </node>
+
+  <node pkg="ros_gz_sim"
+        exec="create"
+        output="screen"
+        args="-name r2 -topic /r2/robot_description -x 1.0 -y -1.0 -z 0.75"/>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r2"
+        output="screen"
+        args="joint_state_broadcaster --controller-manager /r2/controller_manager">
+    <param name="use_sim_time" value="true"/>
+  </node>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r2"
+        output="screen"
+        args="position_controller --inactive --controller-manager /r2/controller_manager"/>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r2"
+        output="screen"
+        args="velocity_controller --inactive --controller-manager /r2/controller_manager"/>
+
+  <node pkg="controller_manager"
+        exec="spawner"
+        namespace="r2"
+        output="screen"
+        args="effort_controller --inactive --controller-manager /r2/controller_manager"/>
+
+</launch>
