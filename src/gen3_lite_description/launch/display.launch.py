@@ -33,6 +33,12 @@ def generate_launch_description():
         'gen3_lite_controllers.yaml'
     )
 
+    kinematics_yaml = os.path.join(
+        get_package_share_directory('gen3_lite_examples_py'),
+        'config',
+        'gen3_lite_kinematics.yaml'
+    )
+
     # ------------------------------------------------
     # Gazebo resource paths
     # ------------------------------------------------
@@ -89,6 +95,32 @@ def generate_launch_description():
                 'use_sim_time': use_sim_time
             }
         ]
+    )
+
+    fk_node = Node(
+        package='gen3_lite_examples_py',
+        executable='forward_kinematics',
+        name='forward_kinematics',
+        namespace=robot_ns,
+        parameters=[kinematics_yaml],
+        remappings=[
+            ('/fk/pose', 'fk/pose'), # Remaps topic pub
+            ('/joint_states','joint_states') # Remaps topic sub
+        ],
+        output='screen'
+    )
+
+    dk_node = Node(
+        package='gen3_lite_examples_py',
+        executable='differential_kinematics',
+        name='differential_kinematics',
+        namespace=robot_ns,
+        parameters=[kinematics_yaml],
+        remappings=[
+            ('/dk/pose', 'dk/pose'), # Remaps topic pub
+            ('/joint_states','joint_states') # Remaps topic sub
+        ],
+        output='screen'
     )
 
     # ------------------------------------------------
@@ -183,6 +215,8 @@ def generate_launch_description():
         gazebo,
         robot_state_publisher,
         spawn_robot,
+        fk_node,
+        dk_node,
 
         RegisterEventHandler(
             OnProcessExit(

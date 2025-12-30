@@ -1,0 +1,34 @@
+/r1/forward_kinematics:
+  ros__parameters:
+    a2: 0.280
+    d2: 0.030
+    d3: 0.020
+    d4: 0.245
+    d5: 0.057
+    d6: 0.235
+    base_frame: r1_base_link
+
+    joint_names:
+      - r1_joint_1
+      - r1_joint_2
+      - r1_joint_3
+      - r1_joint_4
+      - r1_joint_5
+      - r1_joint_6
+
+/r1/differential_kinematics:
+  ros__parameters:
+    a2: 0.280
+    d2: 0.030
+    d3: 0.020
+    d4: 0.245
+    d5: 0.057
+    d6: 0.235
+    base_frame: r1_base_link
+    joint_names:
+      - r1_joint_1
+      - r1_joint_2
+      - r1_joint_3
+      - r1_joint_4
+      - r1_joint_5
+      - r1_joint_6
