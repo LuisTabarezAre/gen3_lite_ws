@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro">
 
-  <!-- ================= MACRO PRINCIPAL ================= -->
+  <!-- ================= MAIN MACRO ================= -->
   <xacro:macro name="gen3_lite_arm" params="p ns controllers">
 
   <!-- WORLD -->
@@ -39,10 +39,10 @@
   <!-- JOINT 1 -->
   <link name="${p}shoulder_link">
     <inertial>
-      <origin xyz="2.477E-05 0.02213531 0.09937686"/>
+      <origin xyz="-2.477E-05 -0.02213531 0.09937686"/>
       <mass value="0.95974404"/>
-      <inertia ixx="0.00165947" ixy="2E-08" ixz="3.6E-07"
-              iyy="0.00140355" iyz="0.00034927" izz="0.00089493"/>
+      <inertia ixx="0.00165947" ixy="-2E-08" ixz="3.6E-07"
+              iyy="0.00140355" iyz="-0.00034927" izz="0.00089493"/>
     </inertial>
     <visual>
       <geometry>
@@ -65,15 +65,16 @@
     <origin xyz="0 0 0.12825"/>
     <axis xyz="0 0 1"/>
     <limit lower="-2.69" upper="2.69" effort="10" velocity="1.6"/>
+    <dynamics damping="0.05" friction="0.2"/>
   </joint>
 
   <!-- JOINT 2 -->
   <link name="${p}arm_link">
     <inertial>
-      <origin xyz="0.02998299 0.21154808 0.0453031"/>
+      <origin xyz="-0.02998299 0.21154808 0.0453031"/>
       <mass value="1.17756164"/>
-      <inertia ixx="0.01149277" ixy="1E-06" ixz="1.6E-07"
-              iyy="0.00102851" iyz="0.00140765" izz="0.01133492"/>
+      <inertia ixx="0.01149277" ixy="1E-06" ixz="-1.6E-07"
+              iyy="0.00102851" iyz="-0.00140765" izz="0.01133492"/>
     </inertial>
     <visual>
       <geometry>
@@ -95,15 +96,16 @@
     <child link="${p}arm_link"/>
     <origin xyz="0 -0.03 0.115" rpy="1.5708 0 0"/>
     <axis xyz="0 0 1"/>
-    <limit lower="-2.69" upper="2.69" effort="14" velocity="1.6"/>
+    <limit lower="-2.69" upper="2.69" effort="25" velocity="1.6"/>
+    <dynamics damping="0.5" friction="1.0"/>
   </joint>
 
   <!-- JOINT 3 -->
   <link name="${p}forearm_link">
     <inertial>
-      <origin xyz="0.0301559 0.09502206 0.0073555"/>
+      <origin xyz="-0.0301559 -0.09502206 -0.0073555"/>
       <mass value="0.59767669"/>
-      <inertia ixx="0.00163256" ixy="7.11E-06" ixz="1.54E-06"
+      <inertia ixx="0.00163256" ixy="-7.11E-06" ixz="-1.54E-06"
               iyy="0.00029798" iyz="9.587E-05" izz="0.00169091"/>
     </inertial>
     <visual>
@@ -125,16 +127,17 @@
     <parent link="${p}arm_link"/>
     <child link="${p}forearm_link"/>
     <origin xyz="0 0.28 0" rpy="-3.1416 0 0"/>
-    <axis xyz="0 0 1"/>
-    <limit lower="-2.69" upper="2.69" effort="10" velocity="1.6"/>
+    <axis xyz="0 0 -1"/>
+    <limit lower="-2" upper="2" effort="10" velocity="1.6"/>
+    <dynamics damping="0.05" friction="0.2"/>
   </joint>
 
   <!-- WRIST -->
   <link name="${p}lower_wrist_link">
     <inertial> 
-      <origin xyz="0.00575149 0.01000443 0.08719207" rpy="0 0 0" /> 
+      <origin xyz="0.00575149 -0.01000443 0.08719207" rpy="0 0 0" /> 
       <mass value="0.52693412" /> 
-      <inertia ixx="0.00069098" ixy="2.4E-07" ixz="0.00016483" iyy="0.00078519" iyz="7.4E-07" izz="0.00034115" /> 
+      <inertia ixx="0.00069098" ixy="-2.4E-07" ixz="0.00016483" iyy="0.00078519" iyz="7.4E-07" izz="0.00034115" /> 
     </inertial>
     <visual>
       <geometry>
@@ -157,13 +160,14 @@
     <origin xyz="0 -0.14 0.02" rpy="1.5708 0 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-2.59" upper="2.59" effort="7" velocity="1.6"/>
+    <dynamics damping="0.05" friction="0.2"/>
   </joint>
 
   <link name="${p}upper_wrist_link">
     <inertial> 
-      <origin xyz="0.08056517 0.00980409 0.01872799" rpy="0 0 0" /> 
+      <origin xyz="-0.08056517 -0.00980409 0.01872799" rpy="0 0 0" /> 
       <mass value="0.58097325" /> 
-      <inertia ixx="0.00021268" ixy="5.21E-06" ixz="2.91E-06" iyy="0.00106371" iyz="1.1E-07" izz="0.00108465" /> 
+      <inertia ixx="0.00021268" ixy="5.21E-06" ixz="-2.91E-06" iyy="0.00106371" iyz="1.1E-07" izz="0.00108465" /> 
     </inertial>
     <visual>
       <geometry>
@@ -186,6 +190,7 @@
     <origin xyz="0.0285 0 0.105" rpy="0 1.5708 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-2.57" upper="2.57" effort="7" velocity="1.6"/>
+    <dynamics damping="0.05" friction="0.2"/>
   </joint>
 
       <!-- JOINT 6 CONECTADO DIRECTO AL GRIPPER -->
@@ -195,6 +200,7 @@
     <origin xyz="-0.105 0 0.0285" rpy="0 -1.5708 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-2.59" upper="2.59" effort="7" velocity="3.2"/>
+    <dynamics damping="0.05" friction="0.2"/>
   </joint>
 
   <!-- ================= GRIPPER ================= -->
@@ -244,7 +250,7 @@
     </collision>
   </link>
 
-  <joint name="${p}right_finger_bottom_joint" type="revolute">
+  <joint name="${p}right_finger_bottom_joint" type="fixed">
     <origin xyz="0 -0.030501 0.070003" rpy="0 1.5708 0"/>
     <parent link="${p}gripper_base_link"/>
     <child link="${p}right_finger_prox_link"/>
@@ -275,7 +281,7 @@
     </collision>
   </link>
 
-  <joint name="${p}right_finger_tip_joint" type="revolute">
+  <joint name="${p}right_finger_tip_joint" type="fixed">
     <origin xyz="-0.045636 0.020423 0"/>
     <parent link="${p}right_finger_prox_link"/>
     <child link="${p}right_finger_dist_link"/>
@@ -307,7 +313,7 @@
     </collision>
   </link>
 
-  <joint name="${p}left_finger_bottom_joint" type="revolute">
+  <joint name="${p}left_finger_bottom_joint" type="fixed">
     <origin xyz="0 0.0305 0.070003" rpy="0 1.5708 0"/>
     <parent link="${p}gripper_base_link"/>
     <child link="${p}left_finger_prox_link"/>
@@ -339,7 +345,7 @@
     </collision>
   </link>
 
-  <joint name="${p}left_finger_tip_joint" type="revolute">
+  <joint name="${p}left_finger_tip_joint" type="fixed">
     <origin xyz="-0.045636 -0.020423 6.9901E-05"/>
     <parent link="${p}left_finger_prox_link"/>
     <child link="${p}left_finger_dist_link"/>

@@ -12,7 +12,6 @@ from launch.substitutions import LaunchConfiguration
 
 from launch_ros.actions import Node
 
-
 def generate_launch_description():
 
     # ------------------------------------------------
@@ -94,6 +93,9 @@ def generate_launch_description():
                 'robot_description': robot_description,
                 'use_sim_time': use_sim_time
             }
+        ],
+        remappings=[
+            ('/joint_states', 'joint_states')
         ]
     )
 
@@ -120,6 +122,14 @@ def generate_launch_description():
             ('/dk/pose', 'dk/pose'), # Remaps topic pub
             ('/joint_states','joint_states') # Remaps topic sub
         ],
+        output='screen'
+    )
+
+    gc_node=Node(
+        package='gen3_lite_examples_cpp',
+        executable='gravity_cancellation_node',
+        name='gravity_cancellation_node',
+        namespace=robot_ns,
         output='screen'
     )
 
@@ -245,5 +255,7 @@ def generate_launch_description():
                 on_exit=[effort_controller],
             )
         ),
-        rviz,
+        
+        gc_node,
+
     ])
